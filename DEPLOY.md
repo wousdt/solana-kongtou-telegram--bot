@@ -2,7 +2,7 @@
 
 这是 Solana 批量钱包 Telegram Bot 的**部署仓库**。
 
-本仓库只提供 Docker Compose、环境变量模板和部署说明；机器人程序通过 GitHub Container Registry（GHCR）部署交付，。
+本仓库只提供 Docker Compose、环境变量模板和部署说明；机器人程序通过 GitHub Container Registry（GHCR）公开镜像交付，用户无需GitHub账号或Token。
 
 > 安全提示：这是热钱包程序。请仅存放可承受损失的资产，并先在测试环境和少量钱包中验证。燃烧交易不可逆。
 
@@ -42,13 +42,13 @@ dist/
 授权管理端私钥
 ```
 
-## 部署要求 宝塔面板
+## 部署要求
 
 - Ubuntu 22.04/24.04 或 Debian 12
 - 至少 2 核 CPU、2 GB 内存
 - Docker 与 Docker Compose
 - Telegram Bot Token
-- GHCR 私有镜像只读 Token
+- 可公开拉取的GHCR机器人镜像
 - 授权管理端地址和公钥
 - 可用的 Solana RPC
 
@@ -110,40 +110,16 @@ env.example
 README.md
 ```
 
-## 三、登录 GHCR 私有镜像仓库
+## 三、验证公开GHCR镜像
 
-向镜像提供方索取：
-
-```text
-镜像地址
-GHCR 登录账号
-只有 read:packages 权限的只读 Token
-```
-
-在服务器执行：
+公开镜像不需要登录，直接执行：
 
 ```bash
-read -s GHCR_READ_TOKEN
+docker manifest inspect \
+  ghcr.io/wousdt/solana-kongtou-bot:2026.07.30
 ```
 
-粘贴 Token 后按回车。输入过程不会显示字符。
-
-登录：
-
-```bash
-echo "$GHCR_READ_TOKEN" |
-docker login ghcr.io -u wousdt --password-stdin
-
-unset GHCR_READ_TOKEN
-```
-
-正常显示：
-
-```text
-Login Succeeded
-```
-
-不要把 Token 写入 `.env`、命令文件、聊天或截图。
+能够返回JSON即表示镜像公开且版本存在。
 
 ## 四、创建配置
 
@@ -388,18 +364,7 @@ redis-data/
 
 ### `pull access denied`
 
-镜像登录失效、Token没有 `read:packages` 权限、镜像名错误或Token被撤销。
-
-```bash
-docker logout ghcr.io
-
-read -s GHCR_READ_TOKEN
-echo "$GHCR_READ_TOKEN" |
-docker login ghcr.io -u wousdt --password-stdin
-unset GHCR_READ_TOKEN
-
-docker compose pull
-```
+公开镜像出现该错误，通常是Package仍为Private或镜像地址错误。镜像所有者需要将Package设为Public，并确认版本标签存在。
 
 ### `manifest unknown`
 
@@ -439,12 +404,11 @@ REDIS_URL=redis://:同一个密码@redis:6379
 
 ### 实例密钥认证失败
 
-授权后台保存的实例密钥与机器人 `.env` 不一致。使用相同实例ID和正确实例密钥重新登记。
+实例密钥与机器人 `.env` 不一致。使用相同实例ID和正确实例密钥重新登记。
 
-### 授权签名无效
+### 签名无效
 
 机器人中的 `LICENSE_PUBLIC_KEY` 与当前授权管理端私钥不匹配。向授权管理员索取最新公钥并重新创建容器。
-
 
 
 ## 备份
@@ -464,11 +428,8 @@ BOT_TOKEN
 MASTER_KEY
 REDIS_PASSWORD
 LICENSE_INSTANCE_SECRET
-GHCR Token
 钱包私钥
 ```
-
-。
 
 ## 免责声明
 
