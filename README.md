@@ -1,4 +1,4 @@
-# Solana 批量空投 Telegram Bot｜部署
+# Solana 批量空投 Telegram Bot｜部署教程
 
 这是 Solana 批量钱包 Telegram Bot 的**部署仓库**。
 
@@ -42,7 +42,7 @@ dist/
 授权管理端私钥
 ```
 
-## 部署要求
+## 部署要求 宝塔面板
 
 - Ubuntu 22.04/24.04 或 Debian 12
 - 至少 2 核 CPU、2 GB 内存
