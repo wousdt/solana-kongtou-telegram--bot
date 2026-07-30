@@ -47,7 +47,7 @@ dist/
 - 至少 2 核 CPU、2 GB 内存
 - Docker 与 Docker Compose
 - Telegram Bot Token
-- 可公开拉取的GHCR机器人镜像
+- GHCR机器人镜像
 - 授权管理端地址和公钥
 - 可用的 Solana RPC
 
@@ -111,7 +111,7 @@ README.md
 
 ## 三、验证公开GHCR镜像
 
-公开镜像不需要登录，直接执行：
+公开镜像不需要登录，直接下载执行：
 
 ```bash
 docker manifest inspect \
